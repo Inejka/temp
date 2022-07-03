@@ -38,12 +38,12 @@ def load_model(pred_config, args, device):
 
 
 def convert_input_file_to_tensor_dataset(
-    pred_config,
-    args,
-    cls_token_segment_id=0,
-    pad_token_segment_id=0,
-    sequence_a_segment_id=0,
-    mask_padding_with_zero=True,
+        pred_config,
+        args,
+        cls_token_segment_id=0,
+        pad_token_segment_id=0,
+        sequence_a_segment_id=0,
+        mask_padding_with_zero=True,
 ):
     tokenizer = load_tokenizer(args)
 
@@ -136,6 +136,9 @@ def convert_input_file_to_tensor_dataset(
 
 
 def predict(pred_config):
+    if pred_config.do_SOP:
+        from SOP_extraction import extraction
+        extraction(pred_config)
     # load model and args
     args = get_args(pred_config)
     device = get_device(pred_config)
@@ -201,6 +204,13 @@ if __name__ == "__main__":
 
     parser.add_argument("--batch_size", default=32, type=int, help="Batch size for prediction")
     parser.add_argument("--no_cuda", action="store_true", help="Avoid using CUDA when available")
+    parser.add_argument("--do_SOP", action="store_true", help="Whether to run subject-object-predicate.")
+    parser.add_argument(
+        "--input_SOP_file",
+        default="sample_SOP_in.txt",
+        type=str,
+        help="Input file for SOP",
+    )
 
     pred_config = parser.parse_args()
     predict(pred_config)
